@@ -1,4 +1,4 @@
-package com.example.moviehub.ui
+package com.example.moviehub.ui.homepage
 
 import android.os.Bundle
 import android.view.LayoutInflater
