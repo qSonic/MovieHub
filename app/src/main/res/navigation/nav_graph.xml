@@ -22,12 +22,19 @@
         <action
             android:id="@+id/action_mainFragment_to_filmFragment"
             app:destination="@id/filmFragment" />
+        <argument
+            android:name="id"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/filmFragment"
         android:name="com.example.moviehub.ui.filmpage.FilmFragment"
         android:label="film_fragment"
-        tools:layout="@layout/film_fragment" />
+        tools:layout="@layout/film_fragment" >
+        <argument
+            android:name="id"
+            app:argType="integer" />
+    </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.moviehub.ui.searchpage.SearchFragment"

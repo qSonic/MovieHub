@@ -7,12 +7,12 @@ import androidx.room.PrimaryKey
     tableName = "films"
 )
 data class Film(
-    @PrimaryKey( autoGenerate = true)
-    var id: Int? = null,
-    var name: String,
-    var year: Int,
-    var rating :Boolean,
-    var ratingVoteCount : Int,
+    @PrimaryKey(autoGenerate = true)
+    var filmId: Int? = null,
+    var nameRu: String,
+    var year: String,
+    var rating: Number,
+    var ratingVoteCount: Int,
     var posterUrl: String,
     var posterUrlPreview: String
 )
