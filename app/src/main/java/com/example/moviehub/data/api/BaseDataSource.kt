@@ -3,7 +3,6 @@ package com.example.moviehub.data.api
 import android.util.Log
 import com.example.moviehub.util.Resource
 import retrofit2.Response
-import java.lang.Exception
 
 abstract class BaseDataSource {
 
@@ -12,6 +11,7 @@ abstract class BaseDataSource {
             val response = call()
             if (response.isSuccessful) {
                 val body = response.body()
+                Log.d("retrofit", body.toString())
                 if (body != null) return Resource.success(body)
             }
             return error(" ${response.code()} ${response.message()}")

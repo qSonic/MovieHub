@@ -1,28 +1,33 @@
 package com.example.moviehub.ui.searchpage
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.moviehub.R
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.example.moviehub.databinding.SearchFragmentBinding
 
 class SearchFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = SearchFragment()
-    }
+    private var _binding: SearchFragmentBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var viewModel: SearchViewModel
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        _binding = SearchFragmentBinding.inflate(inflater, container, false)
+
         viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
-        return inflater.inflate(R.layout.search_fragment, container, false)
+
+        return binding.root
     }
 
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
 }

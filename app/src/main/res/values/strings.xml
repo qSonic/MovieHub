@@ -3,4 +3,7 @@
     <string name="text_movie_list">Список фильмов</string>
     <string name="text_favourites">Избранное</string>
     <string name="text_search">Поиск</string>
+    <string name="text_top">Лучшие</string>
+    <string name="text_popular">Популярные</string>
+    <string name="text_await">Скоро выйдут</string>
 </resources>

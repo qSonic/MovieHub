@@ -9,4 +9,5 @@ class MovieRepository @Inject constructor(
     suspend fun getTopFilms() = remoteDataSource.getTopFilms()
     suspend fun getAwaitFilms() = remoteDataSource.getAwaitFilms()
     suspend fun getPopularFilms() = remoteDataSource.getPopularFilms()
+    suspend fun getFilm(id: Int) = remoteDataSource.getFilm(id)
 }

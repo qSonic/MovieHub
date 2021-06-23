@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.moviehub.adapters.FilmItemListener
-import com.example.moviehub.adapters.FilmsListAdapter
+import com.example.moviehub.adapters.MainFragmentListAdapter
 import com.example.moviehub.databinding.MainFragmentBinding
 import com.example.moviehub.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,8 +24,9 @@ class MainFragment : Fragment(), LifecycleObserver, FilmItemListener {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: MainViewModel
-    private lateinit var popularFilmsAdapter: FilmsListAdapter
-    private lateinit var topFilmsAdapter: FilmsListAdapter
+    private lateinit var popularMainFragmentAdapter: MainFragmentListAdapter
+    private lateinit var topMainFragmentAdapter: MainFragmentListAdapter
+    private lateinit var awaitMainFragmentAdapter: MainFragmentListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,20 +42,22 @@ class MainFragment : Fragment(), LifecycleObserver, FilmItemListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        setupObservers()
         setupRecyclerView()
-
-        super.onViewCreated(view, savedInstanceState)
+        setupObservers()
     }
 
     private fun setupRecyclerView() {
-        popularFilmsAdapter = FilmsListAdapter(this)
+        popularMainFragmentAdapter = MainFragmentListAdapter(this)
         binding.popularRecV.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        binding.popularRecV.adapter = popularFilmsAdapter
+        binding.popularRecV.adapter = popularMainFragmentAdapter
 
-        topFilmsAdapter = FilmsListAdapter(this)
+        topMainFragmentAdapter = MainFragmentListAdapter(this)
         binding.topRecV.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        binding.topRecV.adapter = topFilmsAdapter
+        binding.topRecV.adapter = topMainFragmentAdapter
+
+        awaitMainFragmentAdapter = MainFragmentListAdapter(this)
+        binding.awaitRecV.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.awaitRecV.adapter = awaitMainFragmentAdapter
     }
 
     private fun setupObservers() {
@@ -63,7 +66,27 @@ class MainFragment : Fragment(), LifecycleObserver, FilmItemListener {
             Observer {
                 when (it.status) {
                     Resource.Status.SUCCESS -> {
-                        topFilmsAdapter.setItems(it.data!!.films)
+                        topMainFragmentAdapter.setItems(it.data!!.films)
+                        binding.shimmerTop.visibility = View.GONE
+                        binding.topRecV.visibility = View.VISIBLE
+                    }
+                    Resource.Status.ERROR ->
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+
+                    Resource.Status.LOADING ->
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
+
+        viewModel.popularFilmsResponse.observe(
+            viewLifecycleOwner,
+            Observer {
+                when (it.status) {
+                    Resource.Status.SUCCESS -> {
+                        popularMainFragmentAdapter.setItems(it.data!!.films)
+                        binding.shimmerPopular.visibility = View.GONE
+                        binding.popularRecV.visibility = View.VISIBLE
                     }
                     Resource.Status.ERROR ->
                         Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
@@ -75,12 +98,14 @@ class MainFragment : Fragment(), LifecycleObserver, FilmItemListener {
             }
         )
 
-        viewModel.popularFilmsResponse.observe(
+        viewModel.awaitFilmsResponse.observe(
             viewLifecycleOwner,
             Observer {
                 when (it.status) {
                     Resource.Status.SUCCESS -> {
-                        popularFilmsAdapter.setItems(it.data!!.films)
+                        awaitMainFragmentAdapter.setItems(it.data!!.films)
+                        binding.shimmerAwait.visibility = View.GONE
+                        binding.awaitRecV.visibility = View.VISIBLE
                     }
                     Resource.Status.ERROR ->
                         Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()

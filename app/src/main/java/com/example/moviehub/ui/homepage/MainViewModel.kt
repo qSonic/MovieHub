@@ -1,6 +1,8 @@
 package com.example.moviehub.ui.homepage
 
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.moviehub.data.model.FilmsResponse
 import com.example.moviehub.data.repository.MovieRepository
 import com.example.moviehub.util.Resource
@@ -14,7 +16,6 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
     init {
         getTopFilms()
-        getPopularFilms()
     }
 
     val topFilmsResponse: MutableLiveData<Resource<FilmsResponse>> = MutableLiveData()
@@ -22,17 +23,12 @@ class MainViewModel @Inject constructor(
     val awaitFilmsResponse: MutableLiveData<Resource<FilmsResponse>> = MutableLiveData()
 
     private fun getTopFilms() = viewModelScope.launch {
-        val response = movieRepository.getTopFilms()
-        topFilmsResponse.postValue(response)
-    }
+        val popularResponse = movieRepository.getPopularFilms()
+        val topResponse = movieRepository.getTopFilms()
+        val awaitResponse = movieRepository.getAwaitFilms()
 
-    private fun getPopularFilms() = viewModelScope.launch {
-        val response = movieRepository.getPopularFilms()
-        popularFilmsResponse.postValue(response)
-    }
-
-    private fun getAwaitFilms() = viewModelScope.launch {
-        val response = movieRepository.getAwaitFilms()
-        awaitFilmsResponse.postValue(response)
+        awaitFilmsResponse.postValue(awaitResponse)
+        topFilmsResponse.postValue(topResponse)
+        popularFilmsResponse.postValue(popularResponse)
     }
 }

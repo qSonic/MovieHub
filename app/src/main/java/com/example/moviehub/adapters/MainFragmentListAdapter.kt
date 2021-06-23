@@ -8,9 +8,7 @@ import com.bumptech.glide.Glide
 import com.example.moviehub.data.model.Film
 import com.example.moviehub.databinding.ItemFilmCardBinding
 
-class FilmsListAdapter(private val listener: FilmItemListener) : RecyclerView.Adapter<FilmsListAdapter.FilmsViewHolder>() {
-
-
+class MainFragmentListAdapter(private val listener: FilmItemListener) : RecyclerView.Adapter<MainFragmentListAdapter.FilmsViewHolder>() {
 
     private val items = ArrayList<Film>()
 
@@ -38,10 +36,10 @@ class FilmsListAdapter(private val listener: FilmItemListener) : RecyclerView.Ad
 
         fun bind(item: Film) {
             this.film = item
-            itemBinding.cardText.text = item.nameRu
             Glide.with(itemBinding.root)
                 .load(item.posterUrl)
                 .into(itemBinding.cardImage)
+            itemBinding.cardRating.text = item.rating.toString()
         }
 
         override fun onClick(p0: View?) {
