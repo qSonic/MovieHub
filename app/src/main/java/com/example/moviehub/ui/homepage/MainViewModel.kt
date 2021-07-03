@@ -14,21 +14,35 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val movieRepository: MovieRepository,
 ) : ViewModel() {
-    init {
-        getTopFilms()
-    }
 
     val topFilmsResponse: MutableLiveData<Resource<FilmsResponse>> = MutableLiveData()
     val popularFilmsResponse: MutableLiveData<Resource<FilmsResponse>> = MutableLiveData()
     val awaitFilmsResponse: MutableLiveData<Resource<FilmsResponse>> = MutableLiveData()
 
+    init {
+        getTopFilms()
+    }
+
     private fun getTopFilms() = viewModelScope.launch {
-        val popularResponse = movieRepository.getPopularFilms()
+
+        topFilmsResponse.postValue(Resource.loading())
         val topResponse = movieRepository.getTopFilms()
+
+        popularFilmsResponse.postValue(Resource.loading())
+        val popularResponse = movieRepository.getPopularFilms()
+
+        awaitFilmsResponse.postValue(Resource.loading())
         val awaitResponse = movieRepository.getAwaitFilms()
 
-        awaitFilmsResponse.postValue(awaitResponse)
-        topFilmsResponse.postValue(topResponse)
-        popularFilmsResponse.postValue(popularResponse)
+        awaitFilmsResponse.postValue(handleResponse(awaitResponse))
+        popularFilmsResponse.postValue(handleResponse(popularResponse))
+        topFilmsResponse.postValue(handleResponse(topResponse))
+    }
+
+    private fun handleResponse(response: Resource<FilmsResponse>): Resource<FilmsResponse> {
+        if (response.status == Resource.Status.SUCCESS) {
+            return Resource.success(response.data!!)
+        }
+        return Resource.error(response.message)
     }
 }

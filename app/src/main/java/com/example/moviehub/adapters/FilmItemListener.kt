@@ -1,5 +1,7 @@
 package com.example.moviehub.adapters
 
+import com.example.moviehub.data.model.Film
+
 interface FilmItemListener {
-    fun onClickedFilm(filmId: Int)
+    fun onClickedFilm(film: Film)
 }

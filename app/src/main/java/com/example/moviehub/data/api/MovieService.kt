@@ -2,7 +2,8 @@ package com.example.moviehub.data.api
 
 import com.example.moviehub.data.model.FilmResponse
 import com.example.moviehub.data.model.FilmsResponse
-import com.example.moviehub.util.Constants.Companion.API_KEY
+import com.example.moviehub.data.model.SearchResponse
+import com.example.moviehub.util.Constants.API_KEY
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -18,4 +19,11 @@ interface MovieService {
     @Headers("X-API-KEY: $API_KEY")
     @GET("/api/v2.1/films/{id}?")
     suspend fun getFilm(@Path("id") id: Int): Response<FilmResponse>
+
+    @Headers("X-API-KEY: $API_KEY")
+    @GET("/api/v2.1/films/search-by-keyword")
+    suspend fun searchFilms(
+        @Query("keyword") keyword: String,
+        @Query("page") page: Int
+    ): Response<SearchResponse>
 }

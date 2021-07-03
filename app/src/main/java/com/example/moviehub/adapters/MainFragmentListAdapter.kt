@@ -3,12 +3,15 @@ package com.example.moviehub.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.moviehub.data.model.Film
 import com.example.moviehub.databinding.ItemFilmCardBinding
 
-class MainFragmentListAdapter(private val listener: FilmItemListener) : RecyclerView.Adapter<MainFragmentListAdapter.FilmsViewHolder>() {
+class MainFragmentListAdapter(
+    private val listener: FilmItemListener
+) : RecyclerView.Adapter<MainFragmentListAdapter.FilmsViewHolder>() {
 
     private val items = ArrayList<Film>()
 
@@ -19,7 +22,9 @@ class MainFragmentListAdapter(private val listener: FilmItemListener) : Recycler
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmsViewHolder {
-        val binding: ItemFilmCardBinding = ItemFilmCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding: ItemFilmCardBinding =
+            ItemFilmCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+
         return FilmsViewHolder(binding, listener)
     }
 
@@ -40,10 +45,14 @@ class MainFragmentListAdapter(private val listener: FilmItemListener) : Recycler
                 .load(item.posterUrl)
                 .into(itemBinding.cardImage)
             itemBinding.cardRating.text = item.rating.toString()
+
+            if (itemBinding.cardRating.text.contains("%")) {
+                itemBinding.cardRating.isVisible = false
+            }
         }
 
         override fun onClick(p0: View?) {
-            listener.onClickedFilm(film.filmId!!)
+            listener.onClickedFilm(film)
         }
     }
 

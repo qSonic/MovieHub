@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_fav"
+    app:startDestination="@id/favouritesFragment">
+
+    <fragment
+        android:id="@+id/favouritesFragment"
+        android:name="com.example.moviehub.ui.favourites.FavouritesFragment"
+        android:label="favourites_fragment"
+        tools:layout="@layout/favourites_fragment" >
+        <argument
+            android:name="film"
+            app:argType="com.example.moviehub.data.model.Film" />
+        <action
+            android:id="@+id/action_favouritesFragment_to_film_fragment"
+            app:destination="@id/film_fragment"
+            app:enterAnim="@anim/anim_slide_in_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/film_fragment"
+        android:name="com.example.moviehub.ui.filmpage.FilmFragment"
+        android:label="film_fragment"
+        tools:layout="@layout/film_fragment">
+    <argument
+        android:name="film"
+        app:argType="com.example.moviehub.data.model.Film"/>
+    </fragment>
+
+</navigation>

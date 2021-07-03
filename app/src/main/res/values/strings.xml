@@ -6,4 +6,11 @@
     <string name="text_top">Лучшие</string>
     <string name="text_popular">Популярные</string>
     <string name="text_await">Скоро выйдут</string>
+    <string name="text_year">Год производства: %1$s</string>
+    <string name="text_country">"Страна: %1s"</string>
+    <string name="text_slogan">"Слоган: %1s"</string>
+    <string name="text_home">Movie Hub</string>
+    <string name="text_removed">Удалено из избранного</string>
+    <string name="text_added">Добавлено в избранное</string>
+    <string name="format_name_with_year">%1$s , %2$s</string>
 </resources>

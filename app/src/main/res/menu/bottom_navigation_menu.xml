@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/mainFragment"
+    <item android:id="@+id/nav_main"
         android:title="@string/text_movie_list"
         android:icon="@drawable/ic_home"/>
 
-    <item android:id="@+id/favouritesFragment"
+    <item android:id="@+id/nav_fav"
         android:title="@string/text_favourites"
         android:icon="@drawable/ic_heart_fill"/>
 
-    <item android:id="@+id/searchFragment"
+    <item android:id="@+id/nav_search"
         android:title="@string/text_search"
         android:icon="@drawable/ic_search"/>
 
