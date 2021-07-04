@@ -15,8 +15,8 @@ The MovieHub - Андоид приложение использующее [Kinop
   - [ViewBinding](https://developer.android.com/topic/libraries/view-binding)
   - [Room](https://developer.android.com/topic/libraries/architecture/room)
   - [Navigation](https://developer.android.com/guide/navigation/navigation-getting-started)
-  - [Data Binding](https://developer.android.com/topic/libraries/data-binding)
-  - [MVVM Architecture]() (View - DataBinding - ViewModel - Model)
+  - [View Binding](https://developer.android.com/topic/libraries/view-binding)
+  - [MVVM Architecture]() (View - ViewBinding - ViewModel - Model)
   - Repository pattern
 - [Retrofit2 & OkHttp3](https://github.com/square/retrofit)
 - [Gson](https://github.com/google/gson)
