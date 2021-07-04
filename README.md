@@ -1,7 +1,7 @@
 # MovieHub
 The MovieHub - Андоид приложение использующее [Kinopoisk Api Unofficial](https://kinopoiskapiunofficial.tech/) для отображения информации о фильмах, с возможностью добавления в локальную базу данных.
 
-<img src = "sprites/screen_main.png" width ="280" /> <img src = "sprites/screen_film.png" width ="280" /> <img src = "sprites/screen_favourites.png" width ="280" /> 
+<img src = "sprites/screens.png"/>
 
 ## Стек технологий:
 
