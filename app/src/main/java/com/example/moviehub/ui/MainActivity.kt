@@ -2,6 +2,7 @@ package com.example.moviehub.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: MainActivityBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val splashScreen = installSplashScreen()
 
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
