@@ -12,7 +12,7 @@ abstract class BaseDataSource {
             if (response.isSuccessful) {
                 val body = response.body()
                 Log.d("retrofit", body.toString())
-                if (body != null) return Resource.success(body)
+                if (body != null) return Resource.Success(data = body)
             }
             return error(" ${response.code()} ${response.message()}")
         } catch (e: Exception) {
@@ -21,6 +21,6 @@ abstract class BaseDataSource {
     }
     private fun <T> error(message: String): Resource<T> {
         Log.e("remoteDataSource", message)
-        return Resource.error("Network call has failed for a following reason: $message")
+        return Resource.Error("Network call has failed for a following reason: $message")
     }
 }

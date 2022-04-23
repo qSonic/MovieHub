@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.moviehub.R
 import com.example.moviehub.data.model.Film
 import com.example.moviehub.databinding.ItemFilmCardBinding
 
@@ -43,6 +44,7 @@ class MainFragmentListAdapter(
             this.film = item
             Glide.with(itemBinding.root)
                 .load(item.posterUrl)
+                .placeholder(R.color.shimmer_placeholder)
                 .into(itemBinding.cardImage)
             itemBinding.cardRating.text = item.rating.toString()
 

@@ -41,15 +41,15 @@ class FilmFragment : BaseFragment<FilmFragmentBinding>() {
             .into(binding.expandedImage)
 
         observeChanges(viewModel.filmLiveData) {
-            when (it.status) {
-                Resource.Status.SUCCESS -> {
+            when (it) {
+                is Resource.Success -> {
                     viewModel.checkFavourite(it.data!!.data)
                     bind(data = it.data, binding = binding)
                 }
-                Resource.Status.ERROR -> {
+                is Resource.Error -> {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
                 }
-                Resource.Status.LOADING -> Unit
+                is Resource.Loading -> Unit
             }
         }
 

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.moviehub.data.model.FilmsResponse
 import com.example.moviehub.data.repository.MovieRepository
 import com.example.moviehub.util.Resource
-import com.example.moviehub.util.handleResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -19,15 +18,15 @@ class MainViewModel @Inject constructor(
     private val movieRepository: MovieRepository,
 ) : ViewModel() {
 
-    private val topFilmsLiveData = MutableStateFlow<Resource<FilmsResponse>>(value = Resource.loading())
-    private val popularFilmsLiveData = MutableStateFlow<Resource<FilmsResponse>>(value = Resource.loading())
-    private val awaitFilmsLiveData = MutableStateFlow<Resource<FilmsResponse>>(value = Resource.loading())
+    private val topFilmsLiveData = MutableStateFlow<Resource<FilmsResponse>>(value = Resource.Loading())
+    private val popularFilmsLiveData = MutableStateFlow<Resource<FilmsResponse>>(value = Resource.Loading())
+    private val awaitFilmsLiveData = MutableStateFlow<Resource<FilmsResponse>>(value = Resource.Loading())
 
     val uiState = combine(listOf(topFilmsLiveData, popularFilmsLiveData, awaitFilmsLiveData)) { flowList ->
-        if (flowList.all { it.status == Resource.Status.SUCCESS })
+        if (flowList.all { it is Resource.Success })
             MainFragmentUiState.Success(items = flowList)
         else {
-            val errorResponse = flowList.find { it.status == Resource.Status.ERROR }
+            val errorResponse = flowList.find { it is Resource.Error } as Resource.Error?
             if (errorResponse != null) {
                 MainFragmentUiState.Error(errorResponse.message)
             } else {
@@ -42,9 +41,9 @@ class MainViewModel @Inject constructor(
             val popularResponse = async { movieRepository.getPopularFilms() }
             val awaitResponse = async { movieRepository.getAwaitFilms() }
 
-            awaitFilmsLiveData.emit(handleResponse(awaitResponse.await()))
-            popularFilmsLiveData.emit(handleResponse(popularResponse.await()))
-            topFilmsLiveData.emit(handleResponse(topResponse.await()))
+            awaitFilmsLiveData.emit(awaitResponse.await())
+            popularFilmsLiveData.emit(popularResponse.await())
+            topFilmsLiveData.emit(topResponse.await())
         }
     }
 }

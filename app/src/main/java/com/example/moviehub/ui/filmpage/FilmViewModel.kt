@@ -23,11 +23,9 @@ class FilmViewModel @Inject constructor(
 
     val filmLiveData = _id.switchMap { id ->
         liveData(context = viewModelScope.coroutineContext + Dispatchers.IO) {
-            emit(Resource.loading())
+            emit(Resource.Loading())
             val filmResponse = movieRepository.getFilm(id)
-            if (filmResponse.status == Resource.Status.SUCCESS) {
-                emit(filmResponse)
-            } else emit(Resource.error(filmResponse.message, null))
+            emit(filmResponse)
         }
     }
 

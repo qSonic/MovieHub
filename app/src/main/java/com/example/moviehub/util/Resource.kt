@@ -1,35 +1,8 @@
 package com.example.moviehub.util
 
-import com.example.moviehub.data.model.FilmsResponse
+sealed class Resource<out T>(val data: T?, val message: String?) {
 
-data class Resource<out T>(val status: Status, val data: T?, val message: String?) {
-
-    enum class Status {
-        SUCCESS,
-        ERROR,
-        LOADING
-    }
-
-    companion object {
-        fun <T> success(data: T): Resource<T> {
-            return Resource(Status.SUCCESS, data, null)
-        }
-
-        fun <T> error(message: String?, data: T? = null): Resource<T> {
-            return Resource(Status.ERROR, data, message)
-        }
-
-        fun <T> loading(data: T? = null): Resource<T> {
-            return Resource(Status.LOADING, data, null)
-        }
-    }
+    class Success<out T>(data: T) : Resource<T>(data = data, message = null)
+    class Error<out T>(message: String?) : Resource<T>(data = null, message = message)
+    class Loading<out T>() : Resource<T>(data = null, message = null)
 }
-
-fun <T> handleResponse(response: Resource<T>): Resource<T> {
-    if (response.status == Resource.Status.SUCCESS) {
-        return Resource.success(response.data!!)
-    }
-    return Resource.error(response.message)
-}
-
-

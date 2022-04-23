@@ -39,15 +39,15 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>(), FilmItemListener {
         setupSearch()
 
         observeChanges(viewModel.searchLiveData) {
-            when (it.status) {
-                Resource.Status.SUCCESS -> {
+            when (it) {
+                is Resource.Success -> {
                     searchFragmentAdapter.setItems(it.data!!.films)
                     binding.progressBar.visibility = View.GONE
                 }
-                Resource.Status.ERROR ->
+                is Resource.Error ->
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
 
-                Resource.Status.LOADING -> {
+                is Resource.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                 }
             }
