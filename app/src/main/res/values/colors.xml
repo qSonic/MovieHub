@@ -10,5 +10,6 @@
     <color name="shimmer_placeholder">#dddddd</color>
     <color name="green">#38b438</color>
     <color name="red">#F44336</color>
+    <color name="gray">#808080</color>
 
 </resources>

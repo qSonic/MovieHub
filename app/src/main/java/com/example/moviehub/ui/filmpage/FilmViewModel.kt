@@ -21,7 +21,7 @@ class FilmViewModel @Inject constructor(
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
-    val film = _id.switchMap { id ->
+    val filmLiveData = _id.switchMap { id ->
         liveData(context = viewModelScope.coroutineContext + Dispatchers.IO) {
             emit(Resource.loading())
             val filmResponse = movieRepository.getFilm(id)

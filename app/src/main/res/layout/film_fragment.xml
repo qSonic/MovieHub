@@ -114,7 +114,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="88dp"
-        android:text="TextView"
+        tools:text="10.0"
         android:textColor="@color/green"
         android:textAppearance="@style/TextAppearance.Body"
         android:textStyle="bold"
@@ -126,12 +126,12 @@
     </androidx.core.widget.NestedScrollView>
     <com.google.android.material.button.MaterialButton
         android:id="@+id/fab"
-        app:cornerRadius="@dimen/cardview_default_radius"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:scaleType="fitXY"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="@dimen/fab_margin"
-        android:background="@drawable/ic_fab"
+        android:background="@drawable/fab_background"
         app:backgroundTint="@color/custom_fab_color"
         app:layout_anchor="@id/app_bar"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"

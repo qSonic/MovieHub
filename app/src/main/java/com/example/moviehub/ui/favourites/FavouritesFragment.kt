@@ -2,9 +2,7 @@ package com.example.moviehub.ui.favourites
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -14,48 +12,28 @@ import com.example.moviehub.adapters.FilmItemListener
 import com.example.moviehub.adapters.SearchFragmentListAdapter
 import com.example.moviehub.data.model.Film
 import com.example.moviehub.databinding.FavouritesFragmentBinding
+import com.example.moviehub.ui.core.BaseFragment
+import com.example.moviehub.ui.core.observeChanges
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FavouritesFragment : Fragment(), FilmItemListener {
+class FavouritesFragment : BaseFragment<FavouritesFragmentBinding>(), FilmItemListener {
 
     val viewModel: FavouritesViewModel by viewModels()
 
-    private var _binding: FavouritesFragmentBinding? = null
-    private val binding get() = _binding!!
-
     private lateinit var favouritesFragmentAdapter: SearchFragmentListAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-
-        _binding = FavouritesFragmentBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
+    override fun onBindingCreated(binding: FavouritesFragmentBinding, savedInstanceState: Bundle?) {
+        super.onBindingCreated(binding, savedInstanceState)
         setItemDragListener()
-        setupRecyclerView()
-        setupObservers()
-    }
 
-    private fun setupObservers() {
-        viewModel.getFavourites().observe(
-            viewLifecycleOwner,
-            { films ->
-                favouritesFragmentAdapter.setItems(films)
-            }
-        )
-    }
-
-    private fun setupRecyclerView() {
         favouritesFragmentAdapter = SearchFragmentListAdapter(this)
         binding.favouritesRecV.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.favouritesRecV.adapter = favouritesFragmentAdapter
+
+        observeChanges(viewModel.getFavourites()) {
+            favouritesFragmentAdapter.setItems(it)
+        }
     }
 
     private fun setItemDragListener() {
@@ -77,7 +55,7 @@ class FavouritesFragment : Fragment(), FilmItemListener {
             }
 
         ItemTouchHelper(itemTouchCallback).apply {
-            attachToRecyclerView(binding.favouritesRecV)
+            attachToRecyclerView(binding?.favouritesRecV)
         }
     }
 
@@ -86,8 +64,8 @@ class FavouritesFragment : Fragment(), FilmItemListener {
         findNavController().navigate(action)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+    override fun createViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FavouritesFragmentBinding = FavouritesFragmentBinding.inflate(inflater, container, false)
 }

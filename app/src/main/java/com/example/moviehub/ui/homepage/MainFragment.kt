@@ -2,50 +2,56 @@ package com.example.moviehub.ui.homepage
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.moviehub.adapters.FilmItemListener
 import com.example.moviehub.adapters.MainFragmentListAdapter
 import com.example.moviehub.data.model.Film
 import com.example.moviehub.databinding.MainFragmentBinding
-import com.example.moviehub.util.Resource
+import com.example.moviehub.ui.core.BaseFragment
+import com.example.moviehub.ui.core.bindVisibility
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MainFragment : Fragment(), LifecycleObserver, FilmItemListener {
+class MainFragment : BaseFragment<MainFragmentBinding>(), FilmItemListener {
 
-    private var _binding: MainFragmentBinding? = null
-    private val binding get() = _binding!!
-
-    val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModels()
     private lateinit var popularMainFragmentAdapter: MainFragmentListAdapter
     private lateinit var topMainFragmentAdapter: MainFragmentListAdapter
     private lateinit var awaitMainFragmentAdapter: MainFragmentListAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = MainFragmentBinding.inflate(inflater, container, false)
-
-        return binding.root
+    @OptIn(InternalCoroutinesApi::class)
+    override fun onBindingCreated(binding: MainFragmentBinding, savedInstanceState: Bundle?) {
+        super.onBindingCreated(binding, savedInstanceState)
+        setupRecyclerViews(binding = binding)
+        lifecycleScope.launch {
+            viewModel.uiState.collect { state ->
+                when (state) {
+                    is MainFragmentUiState.Success -> {
+                        topMainFragmentAdapter.setItems(state.items[0].data!!.films)
+                        popularMainFragmentAdapter.setItems(state.items[2].data!!.films)
+                        awaitMainFragmentAdapter.setItems(state.items[1].data!!.films)
+                        changeViewState(binding = binding, visibility = true)
+                    }
+                    is MainFragmentUiState.Error -> {
+                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                    }
+                    is MainFragmentUiState.Loading -> {
+                        changeViewState(binding = binding, visibility = false)
+                    }
+                }
+            }
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        setupRecyclerView()
-        setupObservers()
-    }
-
-    private fun setupRecyclerView() {
+    private fun setupRecyclerViews(binding: MainFragmentBinding) {
         popularMainFragmentAdapter = MainFragmentListAdapter(this)
         binding.popularRecV.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.popularRecV.adapter = popularMainFragmentAdapter
@@ -59,66 +65,22 @@ class MainFragment : Fragment(), LifecycleObserver, FilmItemListener {
         binding.awaitRecV.adapter = awaitMainFragmentAdapter
     }
 
-    private fun setupObservers() {
-        viewModel.topFilmsResponse.observe(
-            viewLifecycleOwner,
-            Observer {
-                when (it.status) {
-                    Resource.Status.SUCCESS -> {
-                        topMainFragmentAdapter.setItems(it.data!!.films)
-                        binding.shimmerTop.visibility = View.GONE
-                        binding.topRecV.visibility = View.VISIBLE
-                    }
-                    Resource.Status.ERROR ->
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+    override fun createViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): MainFragmentBinding = MainFragmentBinding.inflate(inflater, container, false)
 
-                    Resource.Status.LOADING -> Unit
-                }
-            }
-        )
-
-        viewModel.popularFilmsResponse.observe(
-            viewLifecycleOwner,
-            Observer {
-                when (it.status) {
-                    Resource.Status.SUCCESS -> {
-                        popularMainFragmentAdapter.setItems(it.data!!.films)
-                        binding.shimmerPopular.visibility = View.GONE
-                        binding.popularRecV.visibility = View.VISIBLE
-                    }
-                    Resource.Status.ERROR ->
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-
-                    Resource.Status.LOADING -> Unit
-                }
-            }
-        )
-
-        viewModel.awaitFilmsResponse.observe(
-            viewLifecycleOwner,
-            Observer {
-                when (it.status) {
-                    Resource.Status.SUCCESS -> {
-                        awaitMainFragmentAdapter.setItems(it.data!!.films)
-                        binding.shimmerAwait.visibility = View.GONE
-                        binding.awaitRecV.visibility = View.VISIBLE
-                    }
-                    Resource.Status.ERROR ->
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-
-                    Resource.Status.LOADING -> Unit
-                }
-            }
-        )
+    private fun changeViewState(binding: MainFragmentBinding, visibility: Boolean) {
+        binding.shimmerAwait.bindVisibility(!visibility)
+        binding.shimmerTop.bindVisibility(!visibility)
+        binding.shimmerPopular.bindVisibility(!visibility)
+        binding.topRecV.bindVisibility(visibility)
+        binding.popularRecV.bindVisibility(visibility)
+        binding.awaitRecV.bindVisibility(visibility)
     }
 
     override fun onClickedFilm(film: Film) {
         val action = MainFragmentDirections.actionMainFragmentToFilmFragment(film)
         findNavController().navigate(action)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

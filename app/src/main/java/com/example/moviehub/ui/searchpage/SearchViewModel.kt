@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.moviehub.data.model.SearchResponse
 import com.example.moviehub.data.repository.MovieRepository
 import com.example.moviehub.util.Resource
+import com.example.moviehub.util.handleResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,13 +17,11 @@ class SearchViewModel @Inject constructor(
     private val movieRepository: MovieRepository,
 ) : ViewModel() {
 
-    val searchResponse: MutableLiveData<Resource<SearchResponse>> = MutableLiveData()
+    val searchLiveData: MutableLiveData<Resource<SearchResponse>> = MutableLiveData()
     private val searchPage = 1
-    fun searchFilms(keyword: String) = viewModelScope.launch {
-        searchResponse.postValue(Resource.loading())
+    fun searchFilms(keyword: String) = viewModelScope.launch(Dispatchers.IO) {
+        searchLiveData.postValue(Resource.loading())
         val response = movieRepository.searchFilms(keyword, searchPage)
-        if (response.status == Resource.Status.SUCCESS) {
-            searchResponse.postValue(response)
-        } else searchResponse.postValue(Resource.error(response.message))
+        searchLiveData.postValue(handleResponse(response))
     }
 }

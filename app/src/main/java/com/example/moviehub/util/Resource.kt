@@ -1,5 +1,7 @@
 package com.example.moviehub.util
 
+import com.example.moviehub.data.model.FilmsResponse
+
 data class Resource<out T>(val status: Status, val data: T?, val message: String?) {
 
     enum class Status {
@@ -22,3 +24,12 @@ data class Resource<out T>(val status: Status, val data: T?, val message: String
         }
     }
 }
+
+fun <T> handleResponse(response: Resource<T>): Resource<T> {
+    if (response.status == Resource.Status.SUCCESS) {
+        return Resource.success(response.data!!)
+    }
+    return Resource.error(response.message)
+}
+
+
