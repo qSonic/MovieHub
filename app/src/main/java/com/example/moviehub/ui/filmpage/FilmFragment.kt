@@ -2,12 +2,11 @@ package com.example.moviehub.ui.filmpage
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.moviehub.R
@@ -15,11 +14,13 @@ import com.example.moviehub.data.model.Film
 import com.example.moviehub.data.model.FilmResponse
 import com.example.moviehub.databinding.FilmFragmentBinding
 import com.example.moviehub.ui.core.BaseFragment
-import com.example.moviehub.ui.core.observeChanges
 import com.example.moviehub.util.Resource
 import com.example.moviehub.util.StringUtil
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class FilmFragment : BaseFragment<FilmFragmentBinding>() {
 
@@ -40,20 +41,24 @@ class FilmFragment : BaseFragment<FilmFragmentBinding>() {
             .placeholder(R.color.shimmer_placeholder)
             .into(binding.expandedImage)
 
-        observeChanges(viewModel.filmLiveData) {
-            when (it) {
-                is Resource.Success -> {
-                    viewModel.checkFavourite(it.data!!.data)
-                    bind(data = it.data, binding = binding)
+        lifecycleScope.launchWhenCreated {
+            viewModel.filmFlow.collectLatest {
+                when (it) {
+                    is Resource.Success -> {
+                        viewModel.checkFavourite(it.data!!.data)
+                        bind(data = it.data, binding = binding)
+                    }
+                    is Resource.Error -> {
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    }
+                    is Resource.Loading -> Unit
                 }
-                is Resource.Error -> {
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                }
-                is Resource.Loading -> Unit
+            }
+
+            viewModel.isFavouriteFlow.collectLatest {
+                binding.fab.isChecked = it
             }
         }
-
-        observeChanges(viewModel.isFavourite) { binding.fab.isChecked = it }
 
         binding.fab.setOnClickListener {
             if (binding.fab.isChecked) {
@@ -89,5 +94,4 @@ class FilmFragment : BaseFragment<FilmFragmentBinding>() {
         inflater: LayoutInflater,
         container: ViewGroup?
     ): FilmFragmentBinding = FilmFragmentBinding.inflate(inflater, container, false)
-
 }

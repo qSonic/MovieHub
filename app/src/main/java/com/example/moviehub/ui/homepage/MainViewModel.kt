@@ -18,11 +18,11 @@ class MainViewModel @Inject constructor(
     private val movieRepository: MovieRepository,
 ) : ViewModel() {
 
-    private val topFilmsLiveData = MutableStateFlow<Resource<FilmsResponse>>(value = Resource.Loading())
-    private val popularFilmsLiveData = MutableStateFlow<Resource<FilmsResponse>>(value = Resource.Loading())
-    private val awaitFilmsLiveData = MutableStateFlow<Resource<FilmsResponse>>(value = Resource.Loading())
+    private val topFilmsFlow = MutableStateFlow<Resource<FilmsResponse>>(value = Resource.Loading())
+    private val popularFilmsFlow = MutableStateFlow<Resource<FilmsResponse>>(value = Resource.Loading())
+    private val awaitFilmsFlow = MutableStateFlow<Resource<FilmsResponse>>(value = Resource.Loading())
 
-    val uiState = combine(listOf(topFilmsLiveData, popularFilmsLiveData, awaitFilmsLiveData)) { flowList ->
+    val uiState = combine(listOf(topFilmsFlow, popularFilmsFlow, awaitFilmsFlow)) { flowList ->
         if (flowList.all { it is Resource.Success })
             MainFragmentUiState.Success(items = flowList)
         else {
@@ -41,9 +41,9 @@ class MainViewModel @Inject constructor(
             val popularResponse = async { movieRepository.getPopularFilms() }
             val awaitResponse = async { movieRepository.getAwaitFilms() }
 
-            awaitFilmsLiveData.emit(awaitResponse.await())
-            popularFilmsLiveData.emit(popularResponse.await())
-            topFilmsLiveData.emit(topResponse.await())
+            awaitFilmsFlow.emit(awaitResponse.await())
+            popularFilmsFlow.emit(popularResponse.await())
+            topFilmsFlow.emit(topResponse.await())
         }
     }
 }

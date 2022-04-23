@@ -5,7 +5,7 @@ import com.example.moviehub.data.model.Film
 
 @Dao
 interface FilmDao {
-    @Query("SELECT * FROM films WHERE isFavourite = 1")
+    @Query("SELECT * FROM films WHERE isFavouriteFlow = 1")
     suspend fun getFavourites(): List<Film>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

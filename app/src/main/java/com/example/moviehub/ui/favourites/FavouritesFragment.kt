@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,8 +14,8 @@ import com.example.moviehub.adapters.SearchFragmentListAdapter
 import com.example.moviehub.data.model.Film
 import com.example.moviehub.databinding.FavouritesFragmentBinding
 import com.example.moviehub.ui.core.BaseFragment
-import com.example.moviehub.ui.core.observeChanges
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class FavouritesFragment : BaseFragment<FavouritesFragmentBinding>(), FilmItemListener {
@@ -31,8 +32,10 @@ class FavouritesFragment : BaseFragment<FavouritesFragmentBinding>(), FilmItemLi
         binding.favouritesRecV.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.favouritesRecV.adapter = favouritesFragmentAdapter
 
-        observeChanges(viewModel.getFavourites()) {
-            favouritesFragmentAdapter.setItems(it)
+        lifecycleScope.launchWhenStarted {
+            viewModel.getFavourites().collectLatest {
+                favouritesFragmentAdapter.setItems(it)
+            }
         }
     }
 

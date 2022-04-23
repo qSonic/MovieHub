@@ -1,6 +1,7 @@
 package com.example.moviehub.ui.filmpage
 
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.moviehub.data.db.FilmDao
 import com.example.moviehub.data.model.Film
 import com.example.moviehub.data.repository.MovieRepository
@@ -8,21 +9,26 @@ import com.example.moviehub.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 @HiltViewModel
 class FilmViewModel @Inject constructor(
     private val movieRepository: MovieRepository,
     private val filmDao: FilmDao,
 ) : ViewModel() {
-    private val _id = MutableLiveData<Int>()
-    val isFavourite: MutableLiveData<Boolean> = MutableLiveData()
+    private val idFlow = MutableStateFlow<Int>(value = Int.MIN_VALUE)
+    val isFavouriteFlow = MutableStateFlow<Boolean>(value = false)
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
-    val filmLiveData = _id.switchMap { id ->
-        liveData(context = viewModelScope.coroutineContext + Dispatchers.IO) {
+    val filmFlow = idFlow.flatMapLatest { id ->
+        flow {
             emit(Resource.Loading())
             val filmResponse = movieRepository.getFilm(id)
             emit(filmResponse)
@@ -39,10 +45,10 @@ class FilmViewModel @Inject constructor(
     }
 
     fun checkFavourite(film: Film) = viewModelScope.launch {
-        isFavourite.postValue(filmDao.checkFavourite(film.filmId!!))
+        isFavouriteFlow.emit(filmDao.checkFavourite(film.filmId!!))
     }
 
     fun provideId(id: Int) {
-        _id.value = id
+        idFlow.value = id
     }
 }

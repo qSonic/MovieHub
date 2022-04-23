@@ -38,7 +38,7 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>(), FilmItemListener {
 
         setupSearch()
 
-        observeChanges(viewModel.searchLiveData) {
+        observeChanges(viewModel.searchFlow) {
             when (it) {
                 is Resource.Success -> {
                     searchFragmentAdapter.setItems(it.data!!.films)
